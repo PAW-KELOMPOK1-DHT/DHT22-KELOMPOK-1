@@ -6,15 +6,25 @@ export default function Sensors() {
   const [form, setForm] = useState({ name: "", location: "", sensorType: "DHT22", description: "" });
   const [editId, setEditId] = useState(null);
 
+  // Ambil role dari localStorage
+  const role = localStorage.getItem("role"); // "admin" atau "user"
+  const isAdmin = role === "admin";
+
   const fetchSensors = async () => {
-    const res = await api.get("/sensors");
-    setSensors(res.data.data);
+    try {
+      const res = await api.get("/sensors");
+      setSensors(res.data.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => { fetchSensors(); }, []);
 
+  // Handle submit hanya aktif untuk admin
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isAdmin) return; // user biasa tidak bisa submit
     try {
       if (editId) {
         await api.put(`/sensors/${editId}`, form);
@@ -28,6 +38,7 @@ export default function Sensors() {
   };
 
   const handleEdit = (sensor) => {
+    if (!isAdmin) return; // user biasa tidak bisa edit
     setForm({
       name: sensor.name,
       location: sensor.location,
@@ -38,6 +49,7 @@ export default function Sensors() {
   };
 
   const handleDelete = async (id) => {
+    if (!isAdmin) return; // user biasa tidak bisa delete
     if (window.confirm("Hapus sensor ini?")) {
       await api.delete(`/sensors/${id}`);
       fetchSensors();
@@ -45,23 +57,31 @@ export default function Sensors() {
   };
 
   const regenerateToken = async (id) => {
+    if (!isAdmin) return; // user biasa tidak bisa regenerate token
     const res = await api.post(`/sensors/${id}/regenerate-token`);
     alert(`New API Token: ${res.data.data.apiToken}`);
   };
 
   return (
-    <div>
+    <div style={{ padding: "20px", fontFamily: "Roboto, sans-serif", color: "#fff", background: "#0f0f1a", minHeight: "100vh" }}>
       <h2>Sensors</h2>
-      <form onSubmit={handleSubmit}>
-        <input placeholder="Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})}/>
-        <input placeholder="Location" value={form.location} onChange={e => setForm({...form, location: e.target.value})}/>
-        <input placeholder="Type" value={form.sensorType} onChange={e => setForm({...form, sensorType: e.target.value})}/>
-        <input placeholder="Description" value={form.description} onChange={e => setForm({...form, description: e.target.value})}/>
-        <button type="submit">{editId ? "Update" : "Add"} Sensor</button>
-      </form>
-      <table>
+
+      {isAdmin && (
+        <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
+          <input placeholder="Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})}/>
+          <input placeholder="Location" value={form.location} onChange={e => setForm({...form, location: e.target.value})}/>
+          <input placeholder="Type" value={form.sensorType} onChange={e => setForm({...form, sensorType: e.target.value})}/>
+          <input placeholder="Description" value={form.description} onChange={e => setForm({...form, description: e.target.value})}/>
+          <button type="submit">{editId ? "Update" : "Add"} Sensor</button>
+        </form>
+      )}
+
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
-          <tr><th>ID</th><th>Name</th><th>Location</th><th>Type</th><th>Actions</th></tr>
+          <tr>
+            <th>ID</th><th>Name</th><th>Location</th><th>Type</th>
+            {isAdmin && <th>Actions</th>}
+          </tr>
         </thead>
         <tbody>
           {sensors.map(s => (
@@ -70,11 +90,13 @@ export default function Sensors() {
               <td>{s.name}</td>
               <td>{s.location}</td>
               <td>{s.sensor_type}</td>
-              <td>
-                <button onClick={() => handleEdit(s)}>Edit</button>
-                <button onClick={() => handleDelete(s.id)}>Delete</button>
-                <button onClick={() => regenerateToken(s.id)}>Regenerate Token</button>
-              </td>
+              {isAdmin && (
+                <td>
+                  <button onClick={() => handleEdit(s)}>Edit</button>
+                  <button onClick={() => handleDelete(s.id)}>Delete</button>
+                  <button onClick={() => regenerateToken(s.id)}>Regenerate Token</button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

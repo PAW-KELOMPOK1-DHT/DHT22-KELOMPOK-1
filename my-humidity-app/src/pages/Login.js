@@ -13,10 +13,26 @@ const Login = () => {
     setError('');
     try {
       const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
-      localStorage.setItem('token', res.data.token);
-      navigate('/dashboard');
+      
+      // Ambil token & role
+      const token = res.data.token || res.data.data?.token;
+      const role = res.data.user?.role || res.data.data?.user?.role;
+
+      if (!token || !role) {
+        setError("Token atau role tidak diterima dari server");
+        return;
+      }
+
+      localStorage.setItem('token', token);   // simpan token
+      localStorage.setItem('role', role);     // simpan role
+      navigate('/dashboard');                 // redirect ke dashboard
     } catch (err) {
-      setError(err.response?.data?.message || 'Login gagal');
+      console.error(err);
+      if (err.response) {
+        setError(err.response.data?.message || "Login gagal");
+      } else {
+        setError("Gagal koneksi ke server");
+      }
     }
   };
 
@@ -28,28 +44,33 @@ const Login = () => {
           justify-content: center;
           align-items: center;
           height: 100vh;
-          background: #0f0f1a;
+          background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
           font-family: 'Roboto', sans-serif;
           color: #fff;
         }
         .login-container {
           background: #111;
           padding: 40px 30px;
-          border-radius: 15px;
-          box-shadow: 0 6px 20px rgba(0, 255, 255, 0.2);
+          border-radius: 20px;
+          box-shadow: 0 10px 25px rgba(0, 255, 255, 0.3);
           width: 100%;
           max-width: 400px;
           text-align: center;
+          animation: fadeIn 0.8s ease-in-out;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         .login-container h2 {
           color: #00f0ff;
           font-size: 2rem;
-          margin-bottom: 30px;
+          margin-bottom: 25px;
           letter-spacing: 1px;
         }
         .login-container label {
           display: block;
-          margin-bottom: 8px;
+          margin-bottom: 6px;
           font-weight: 500;
           text-align: left;
         }
@@ -57,7 +78,7 @@ const Login = () => {
           width: 100%;
           padding: 12px 15px;
           margin-bottom: 20px;
-          border-radius: 10px;
+          border-radius: 12px;
           border: none;
           background: #222;
           color: #fff;
@@ -66,13 +87,13 @@ const Login = () => {
         }
         .login-container input:focus {
           background: #333;
-          box-shadow: 0 0 5px #00f0ff;
+          box-shadow: 0 0 10px #00f0ff;
           outline: none;
         }
         .login-container button {
           width: 100%;
           padding: 12px;
-          border-radius: 10px;
+          border-radius: 12px;
           border: none;
           background: #00f0ff;
           color: #111;
@@ -86,8 +107,8 @@ const Login = () => {
           transform: translateY(-2px);
         }
         .register-link {
-          margin-top: 20px;
-          font-size: 0.9rem;
+          margin-top: 18px;
+          font-size: 0.95rem;
           text-align: center;
         }
         .register-link a {

@@ -1,10 +1,18 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import React from "react";
+import { Navigate } from "react-router-dom";
 
-const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem('token');
+export default function PrivateRoute({ children, roles }) {
+  const token = localStorage.getItem("token");
+  const userRole = localStorage.getItem("role"); // ambil role dari login
 
-  return token ? children : <Navigate to="/login" />;
-};
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
 
-export default PrivateRoute;
+  if (roles && !roles.includes(userRole)) {
+    // jika role tidak termasuk, redirect ke dashboard
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+}
