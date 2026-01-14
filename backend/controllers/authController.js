@@ -12,7 +12,7 @@ const generateToken = (userId) => {
 // Register User
 exports.register = async (req, res) => {
   try {
-    const { username, email, password, role } = req.body;
+    const { username, email, password } = req.body;
 
     // Validasi input
     if (!username || !email || !password) {
@@ -36,12 +36,12 @@ exports.register = async (req, res) => {
       });
     }
 
-    // Buat user baru
+    // Buat user baru (role selalu 'user', admin hanya bisa dibuat dari database)
     const user = await User.create({
       username,
       email,
       password,
-      role: role || 'user'
+      role: 'user'
     });
 
     const token = generateToken(user.id);

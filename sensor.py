@@ -13,7 +13,7 @@ import sys
 
 # ========== KONFIGURASI ==========
 # Ganti dengan URL server backend Anda
-API_URL = "http://localhost:5000/api/sensor-data"
+API_URL = "http://100.96.103.85:5000/api/sensor-data"
 
 # Ganti dengan API Token yang didapat dari admin (setelah create sensor di backend)
 API_TOKEN = "your_sensor_api_token_here"
