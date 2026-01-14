@@ -12,7 +12,4 @@ router.get('/stats', dashboardController.getDashboardStats);
 // Chart data untuk grafik
 router.get('/chart', dashboardController.getChartData);
 
-// Aggregated data (avg, min, max)
-router.get('/aggregated', dashboardController.getAggregatedData);
-
 module.exports = router;
