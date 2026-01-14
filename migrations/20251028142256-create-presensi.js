@@ -1,0 +1,46 @@
+'use strict';
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable('Presensis', {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER
+      },
+      userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        // Menambahkan relasi (Foreign Key) ke tabel Users
+        references: {
+          model: 'Users', // Nama tabel yang direferensikan (asumsi nama tabel pengguna adalah 'Users')
+          key: 'id'      // Kolom di tabel Users yang direferensikan
+        },
+        // Opsi cascade untuk update dan delete
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+      },
+      // Kolom 'nama' telah dihapus sesuai instruksi
+      checkIn: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      checkOut: {
+        allowNull: true, // checkOut bisa kosong saat pertama kali check-in
+        type: Sequelize.DATE
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      }
+    });
+  },
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable('Presensis');
+  }
+};

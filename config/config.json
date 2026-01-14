@@ -1,0 +1,39 @@
+{
+  "development": {
+    "username": "root",
+    "password": "iVoltarouuu13579",
+    "database": "database_development",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "port": 3309,
+    "timezone": "+07:00",
+    "dialectOptions": {
+      "dateStrings": true,
+      "typeCast": true
+    }
+  },
+  "test": {
+    "username": "root",
+    "password": "iVoltarouuu13579",
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "timezone": "+07:00",
+    "dialectOptions": {
+      "dateStrings": true,
+      "typeCast": true
+    }
+  },
+  "production": {
+    "username": "root",
+    "password": "iVoltarouuu13579",
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "timezone": "+07:00",
+    "dialectOptions": {
+      "dateStrings": true,
+      "typeCast": true
+    }
+  }
+}
