@@ -1,7 +1,9 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
+
+const { sequelize, testConnection } = require('./config/database');
+const models = require('./models');
 
 const app = express();
 
@@ -17,13 +19,22 @@ const sensorDataRoutes = require('./routes/sensorDataRoutes');
 const userRoutes = require('./routes/userRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 
-// Database Connection
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('MongoDB Connected'))
-.catch(err => console.error('MongoDB connection error:', err));
+// Test Database Connection and Sync
+const initializeDatabase = async () => {
+  try {
+    await testConnection();
+    
+    // Sync database (create tables if not exist)
+    // Use { alter: true } in development to update tables, { force: true } to drop and recreate
+    await sequelize.sync({ alter: process.env.NODE_ENV === 'development' });
+    console.log('Database synchronized');
+  } catch (error) {
+    console.error('Database initialization failed:', error);
+    process.exit(1);
+  }
+};
+
+initializeDatabase();
 
 // Routes
 app.use('/api/auth', authRoutes);
