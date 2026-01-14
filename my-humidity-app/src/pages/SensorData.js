@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/api";
+import Navbar from "../components/Navbar";
 
 export default function SensorData() {
   const [data, setData] = useState([]);
@@ -28,41 +29,89 @@ export default function SensorData() {
   };
 
   return (
-    <div style={{ padding: "20px", fontFamily: "Roboto, sans-serif", color: "#fff", background: "#0f0f1a", minHeight: "100vh" }}>
-      <h2>Sensor Data</h2>
-      <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "15px" }}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Sensor</th>
-            <th>Humidity</th>
-            <th>Temperature</th>
-            <th>Timestamp</th>
-            {isAdmin && <th>Actions</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map(d => (
-            <tr key={d.id}>
-              <td>{d.id}</td>
-              <td>{d.sensor?.name}</td>
-              <td>{d.humidity}</td>
-              <td>{d.temperature}</td>
-              <td>{new Date(d.timestamp).toLocaleString()}</td>
-              {isAdmin && (
-                <td>
-                  <button 
-                    onClick={() => handleDelete(d.id)}
-                    style={{ padding: "5px 10px", borderRadius: "5px", cursor: "pointer", background: "#ff4d4d", color: "#fff", border: "none" }}
-                  >
-                    Delete
-                  </button>
-                </td>
-              )}
+    <div style={{ fontFamily: "Roboto, sans-serif", color: "#fff", background: "#0f0f1a", minHeight: "100vh" }}>
+      {/* Navbar */}
+      <Navbar />
+
+      {/* Internal CSS */}
+      <style>{`
+        .sensor-data-container {
+          padding: 20px;
+        }
+        h2 {
+          text-align: center;
+          color: #00f0ff;
+          margin-bottom: 20px;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 15px;
+        }
+        th, td {
+          padding: 12px;
+          border-bottom: 1px solid #333;
+          text-align: left;
+        }
+        th {
+          background: #111;
+          color: #00f0ff;
+        }
+        tr:hover {
+          background: #222;
+        }
+        td button {
+          padding: 5px 10px;
+          border-radius: 5px;
+          cursor: pointer;
+          border: none;
+          transition: 0.3s;
+        }
+        td button:hover {
+          opacity: 0.8;
+        }
+        .delete-btn {
+          background: #ff4d4d;
+          color: #fff;
+        }
+      `}</style>
+
+      <div className="sensor-data-container">
+        <h2>Sensor Data</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Sensor</th>
+              <th>Humidity</th>
+              <th>Temperature</th>
+              <th>Timestamp</th>
+              {isAdmin && <th>Actions</th>}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data.map(d => (
+              <tr key={d.id}>
+                <td>{d.id}</td>
+                <td>{d.sensor?.name}</td>
+                <td>{d.humidity}</td>
+                <td>{d.temperature}</td>
+                <td>{new Date(d.timestamp).toLocaleString()}</td>
+                {isAdmin && (
+                  <td>
+                    <button 
+                      className="delete-btn"
+                      onClick={() => handleDelete(d.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
