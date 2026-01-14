@@ -19,7 +19,7 @@ API_URL = "http://localhost:5000/api/sensor-data"
 API_TOKEN = "your_sensor_api_token_here"
 
 # Pin GPIO untuk sensor (GPIO4 = Pin 7)
-SENSOR_PIN = board.D4
+SENSOR_PIN = board.D23
 
 # Tipe sensor (DHT22 atau DHT11)
 SENSOR_TYPE = "DHT22"
